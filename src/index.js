@@ -136,6 +136,20 @@ export default function PolymerRedux(store) {
 			bind(this, properties);
 		}
 
+		connectedCallback(){
+			super.connectedCollback();
+			// Collect the action creators first as property changes trigger
+			// dispatches from observers, see #65, #66, #67
+			const actions = collect(this.constructor, 'actions');
+			Object.defineProperty(this, '_reduxActions', {
+				configurable: true,
+				value: actions
+			});
+
+			const properties = collect(this.constructor, 'properties');
+			bind(this, properties);
+		}
+
 		disconnectedCallback() {
 			unbind(this);
 			super.disconnectedCallback();
